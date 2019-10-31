@@ -1,4 +1,4 @@
-package Hello
+package main
 
 import "testing"
 
