@@ -1,3 +1,4 @@
 testing
 hello
-.idea/*
+**/.idea/*
+.idea/
