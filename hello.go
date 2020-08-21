@@ -3,10 +3,11 @@ package main
 import "fmt"
 
 func main() {
-	Hello()
+	fmt.Println("Hello, world from fmt")
+	foo()
+	fmt.Println("Something there")
 }
 
-func Hello() string {
-	fmt.Println("Hello, world from fmt")
-	return "Hello, world."
+func foo() {
+	fmt.Println("Hello from fmt from foo() ;)")
 }
