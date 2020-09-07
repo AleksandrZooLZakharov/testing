@@ -1,103 +1,43 @@
 package main
 
-//go get ...things... not imported yet)
 import (
 	"fmt"
-	"sort"
+	"runtime"
+	"sync"
 )
-
-type user struct {
-	First   string   `json:"First"`
-	Last    string   `json:"Last"`
-	Age     int      `json:"Age"`
-	Sayings []string `json:"Sayings"`
-}
-
-type ByAge []user
-type ByLast []user
 
 var err error //for storing errors
 
+var vg sync.WaitGroup
+
 func main() {
-	u1 := user{
-		First: "James",
-		Last:  "Bond",
-		Age:   32,
-		Sayings: []string{
-			"Shaken, not stirred",
-			"Youth is no guarantee of innovation",
-			"In his majesty's royal service",
-		},
-	}
+	fmt.Println("OS\t\t", runtime.GOOS)
+	fmt.Println("ARCH\t\t", runtime.GOARCH)
+	fmt.Println("CPUs\t\t", runtime.NumCPU())
+	fmt.Println("GOROUTINES\t", runtime.NumGoroutine())
 
-	u2 := user{
-		First: "Miss",
-		Last:  "Moneypenny",
-		Age:   27,
-		Sayings: []string{
-			"James, it is soo good to see you",
-			"Would you like me to take care of that for you, James?",
-			"I would really prefer to be a secret agent myself.",
-		},
-	}
+	vg.Add(1)
+	go foo()
+	bar()
 
-	u3 := user{
-		First: "M",
-		Last:  "Hmmmm",
-		Age:   54,
-		Sayings: []string{
-			"Oh, James. You didn't.",
-			"Dear God, what has James done now?",
-			"Can someone please tell me where James Bond is?",
-		},
-	}
-
-	users := []user{u1, u2, u3}
-
-	fmt.Println(users)
-	fmt.Println("RAW---------------------------------")
-	for _, v := range users {
-		fmt.Println(v.First, v.Last, v.Age)
-		for _, vari := range v.Sayings {
-			fmt.Printf("\t%v\n", vari)
-		}
-
-	}
-
-	for _, v := range users {
-		sort.Strings(v.Sayings)
-	}
-
-	fmt.Println(users)
-	fmt.Println("SORT INNER LEVEL Alphab---------------------------------")
-	for _, v := range users {
-		fmt.Println(v.First, v.Last, v.Age)
-		for _, vari := range v.Sayings {
-			fmt.Printf("\t%v\n", vari)
-		}
-
-	}
-
-	sort.Sort(ByLast(users))
-	fmt.Println(users)
-	fmt.Println("SORT UPPER LEVEL byAge---------------------------------")
-	for _, v := range users {
-		fmt.Println(v.First, v.Last, v.Age)
-		for _, vari := range v.Sayings {
-			fmt.Printf("\t%v\n", vari)
-		}
-
-	}
+	fmt.Println("GOROUTINES\t", runtime.NumGoroutine())
+	vg.Wait()
+	fmt.Println("GOROUTINES\t", runtime.NumGoroutine())
 }
 
 // func (r receiver) identifier(parameters) (return(s)) { code }
-func (u ByAge) Len() int           { return len(u) }
-func (u ByAge) Swap(x, y int)      { u[x], u[y] = u[y], u[x] }
-func (u ByAge) Less(x, y int) bool { return u[x].Age < u[y].Age }
+func foo() {
+	for i := 0; i <= 2; i++ {
+		fmt.Println("foo", i)
+	}
+	vg.Done()
+}
 
-func (u ByLast) Len() int           { return len(u) }
-func (u ByLast) Swap(x, y int)      { u[x], u[y] = u[y], u[x] }
-func (u ByLast) Less(x, y int) bool { return u[x].Last < u[y].Last }
+func bar() {
+	for i := 0; i <= 2; i++ {
+		fmt.Println("bar", i)
+	}
+}
 
 //func (p user) String() string {
 //	return fmt.Sprintf("%s %v: %d", p.First, p.Last, p.Age)
