@@ -1,35 +1,38 @@
 package main
 
+//go get ...things... not imported yet)
 import (
+	"encoding/json"
 	"fmt"
-	"sort"
 )
 
-var err error //for storing errors
-
 type person struct {
-	first string
-	age   int
+	First   string   `json:"First"`
+	Last    string   `json:"Last"`
+	Age     int      `json:"Age"`
+	Sayings []string `json:"Sayings"`
 }
 
-type ByAge []person
+var err error //for storing errors
+var uns []person
 
 func main() {
-	p1 := person{"James", 32}
-	p2 := person{"Moneypenny", 27}
-	p3 := person{"Q", 64}
-	p4 := person{"M", 56}
+	s := `[{"First":"James","Last":"Bond","Age":32,"Sayings":["Shaken, not stirred","Youth is no guarantee of innovation","In his majesty's royal service"]},{"First":"Miss","Last":"Moneypenny","Age":27,"Sayings":["James, it is soo good to see you","Would you like me to take care of that for you, James?","I would really prefer to be a secret agent myself."]},{"First":"M","Last":"Hmmmm","Age":54,"Sayings":["Oh, James. You didn't.","Dear God, what has James done now?","Can someone please tell me where James Bond is?"]}]`
+	//fmt.Println(s)
 
-	people := []person{p1, p2, p3, p4}
+	err = json.Unmarshal([]byte(s), &uns)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("%+v\n", uns)
+	fmt.Println("-------")
+	for _, v := range uns {
+		fmt.Println(v.First, v.Last, v.Age, "loves to say:")
+		for _, v2 := range v.Sayings {
+			fmt.Println("\t", v2)
+		}
+	}
 
-	fmt.Println(people)
-
-	sort.Sort(ByAge(people))
-
-	fmt.Println(people)
 }
 
 // func (r receiver) identifier(parameters) (return(s)) { code }
-func (a ByAge) Len() int           { return len(a) }
-func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByAge) Less(i, j int) bool { return a[i].first < a[j].first }
